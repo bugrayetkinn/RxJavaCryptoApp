@@ -11,7 +11,6 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.observers.DisposableSingleObserver
 import io.reactivex.rxjava3.schedulers.Schedulers
 
-
 /**
 
 Created by : Buğra Yetkin
@@ -24,10 +23,16 @@ class MainViewModel(private val cryptoRepository: CryptoRepository) : ViewModel(
 
     private val compositeDisposable = CompositeDisposable()
 
+    /**
+     * Api
+     */
     private val _cryptoListFromApi = MutableLiveData<List<CryptoModel>>()
     val cryptoListFromApi: LiveData<List<CryptoModel>>
         get() = _cryptoListFromApi
 
+    /**
+     * Database
+     */
     val cryptoListFromDb: LiveData<List<CryptoModel>> = cryptoRepository.getAllCryptoFromDb()
 
 
@@ -35,9 +40,8 @@ class MainViewModel(private val cryptoRepository: CryptoRepository) : ViewModel(
         getAllCryptoFromApi()
     }
 
-
     private fun getAllCryptoFromApi() {
-        deleteAllCrypto()
+        deleteAllCryptoFromDb()
         compositeDisposable.add(
             cryptoRepository.getAllCryptoFromApi().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -64,7 +68,7 @@ class MainViewModel(private val cryptoRepository: CryptoRepository) : ViewModel(
             })
     )
 
-    private fun deleteAllCrypto() =
+    private fun deleteAllCryptoFromDb() =
         compositeDisposable.add(
             cryptoRepository.deleteAllCrypto().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe({
