@@ -19,38 +19,60 @@ Created by : Buğra Yetkin
 Mail : bugrayetkinn@gmail.com
 
  */
+
 class MainViewModel(private val cryptoRepository: CryptoRepository) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
-    private val _cryptos = MutableLiveData<List<CryptoModel>>()
-    val cryptos: LiveData<List<CryptoModel>>
-        get() = _cryptos
+
+    private val _cryptoListFromApi = MutableLiveData<List<CryptoModel>>()
+    val cryptoListFromApi: LiveData<List<CryptoModel>>
+        get() = _cryptoListFromApi
+
+    val cryptoListFromDb: LiveData<List<CryptoModel>> = cryptoRepository.getAllCryptoFromDb()
 
 
     init {
-        getAllCrypto()
+        getAllCryptoFromApi()
     }
 
 
-    private fun getAllCrypto() {
-
-        Log.e("Loading", "..")
-
+    private fun getAllCryptoFromApi() {
+        deleteAllCrypto()
         compositeDisposable.add(
-            cryptoRepository.getAllCrypto().subscribeOn(Schedulers.io())
+            cryptoRepository.getAllCryptoFromApi().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<List<CryptoModel>>() {
-                    override fun onSuccess(t: List<CryptoModel>?) {
-                        _cryptos.value = t
-                        Log.e("Success", "..")
+                    override fun onSuccess(cryptoList: List<CryptoModel>?) {
+                        _cryptoListFromApi.value = cryptoList
+                        cryptoList?.let {
+                            insertAllCryptoFromDb(it)
+                        }
                     }
 
                     override fun onError(e: Throwable?) {
-                        Log.e("Error", "..")
                     }
                 })
         )
     }
+
+    private fun insertAllCryptoFromDb(list: List<CryptoModel>) = compositeDisposable.add(
+        cryptoRepository.insertAllCryptoFromDb(list).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread()).subscribe({
+                Log.e("Success", "INSERT")
+            }, {
+                Log.e("Error INSERT", "${it.message}")
+            })
+    )
+
+    private fun deleteAllCrypto() =
+        compositeDisposable.add(
+            cryptoRepository.deleteAllCrypto().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe({
+                    Log.e("Success", "DELETE")
+                }, {
+                    Log.e("Error DELETE", "${it.message}")
+                })
+        )
 
     override fun onCleared() {
         super.onCleared()

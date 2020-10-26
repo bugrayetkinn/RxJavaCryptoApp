@@ -13,5 +13,5 @@ Mail : bugrayetkinn@gmail.com
  */
 
 val cryptoRepositoryModule = module {
-    single { CryptoRepository(get()) }
+    single { CryptoRepository(get(), get()) }
 }

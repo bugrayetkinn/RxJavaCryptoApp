@@ -15,5 +15,5 @@ Mail : bugrayetkinn@gmail.com
 interface CryptoAPI {
 
     @GET("prices")
-    fun getAllCrypto(@Query("key") key: String): Single<List<CryptoModel>>
+    fun getAllCryptoFromApi(@Query("key") key: String): Single<List<CryptoModel>>
 }

@@ -15,8 +15,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        mainViewModel.cryptos.observe(this, {
-            Log.e("List:", "$it")
+        mainViewModel.cryptoListFromApi.observe(this, {
+            Log.e("Api:", "$it")
+        })
+
+        mainViewModel.cryptoListFromDb.observe(this, {
+            Log.e("Db:", "$it")
         })
     }
 }

@@ -2,6 +2,7 @@ package com.yetkin.rxjavacryptoapp
 
 import android.app.Application
 import com.yetkin.rxjavacryptoapp.module.cryptoClientModule
+import com.yetkin.rxjavacryptoapp.module.cryptoDatabaseModule
 import com.yetkin.rxjavacryptoapp.module.cryptoRepositoryModule
 import com.yetkin.rxjavacryptoapp.module.mainViewModelModule
 import org.koin.android.ext.koin.androidContext
@@ -25,7 +26,7 @@ class App : Application() {
                 cryptoRepositoryModule,
                 mainViewModelModule,
                 cryptoClientModule,
-                cryptoClientModule
+                cryptoDatabaseModule
             )
         }
     }
