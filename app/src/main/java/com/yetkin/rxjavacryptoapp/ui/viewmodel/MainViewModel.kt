@@ -1,5 +1,6 @@
 package com.yetkin.rxjavacryptoapp.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -31,19 +32,25 @@ class MainViewModel(private val cryptoRepository: CryptoRepository) : ViewModel(
     }
 
 
-    private fun getAllCrypto() = compositeDisposable.add(
+    private fun getAllCrypto() {
 
-        cryptoRepository.getAllCrypto().subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(object : DisposableSingleObserver<List<CryptoModel>>() {
-                override fun onSuccess(t: List<CryptoModel>?) {
-                    _cryptos.value = t
-                }
+        Log.e("Loading", "..")
 
-                override fun onError(e: Throwable?) {
-                }
-            })
-    )
+        compositeDisposable.add(
+            cryptoRepository.getAllCrypto().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableSingleObserver<List<CryptoModel>>() {
+                    override fun onSuccess(t: List<CryptoModel>?) {
+                        _cryptos.value = t
+                        Log.e("Success", "..")
+                    }
+
+                    override fun onError(e: Throwable?) {
+                        Log.e("Error", "..")
+                    }
+                })
+        )
+    }
 
     override fun onCleared() {
         super.onCleared()
